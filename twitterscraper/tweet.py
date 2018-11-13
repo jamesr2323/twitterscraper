@@ -6,7 +6,7 @@ from coala_utils.decorators import generate_ordering
 
 @generate_ordering('timestamp', 'id', 'text', 'user', 'replies', 'retweets', 'likes')
 class Tweet:
-    def __init__(self, user, fullname, id, url, timestamp, text, replies, retweets, likes, html):
+    def __init__(self, user, fullname, id, url, timestamp, text, replies, retweets, likes, html, is_video):
         self.user = user.strip('\@')
         self.fullname = fullname
         self.id = id
@@ -17,12 +17,13 @@ class Tweet:
         self.retweets = retweets
         self.likes = likes
         self.html = html
+        self.is_video = is_video
 
     @classmethod
     def from_soup(cls, tweet):
         return cls(
             user=tweet.find('span', 'username').text or "",
-            fullname=tweet.find('strong', 'fullname').text or "", 
+            fullname=tweet.find('strong', 'fullname').text or "",
             id=tweet['data-item-id'] or "",
             url = tweet.find('div', 'tweet')['data-permalink-path'] or "",
             timestamp=datetime.utcfromtimestamp(
@@ -38,6 +39,7 @@ class Tweet:
                 'span', 'ProfileTweet-action--favorite u-hiddenVisually').find(
                     'span', 'ProfileTweet-actionCount')['data-tweet-stat-count'] or '0'),
             html=str(tweet.find('p', 'tweet-text')) or "",
+            is_video= str(not not tweet.find('div', 'AdaptiveMedia-video'))
         )
 
     @classmethod

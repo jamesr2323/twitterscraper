@@ -105,11 +105,12 @@ def main():
                 with open(args.output, "w", encoding="utf-8") as output:
                     if args.csv:
                         f = csv.writer(output)
-                        f.writerow(["user", "fullname", "tweet-id", "timestamp", "url", "likes", "replies", "retweets", "text", "html"])
+                        f.writerow(["user", "fullname", "tweet-id", "timestamp", "url", "likes", "replies", "retweets", "text", "html", "is_video"])
                         for x in tweets:
-                            f.writerow([x.user, x.fullname, x.id, x.timestamp, x.url,
+                            if not x.is_video == None:
+                                f.writerow([x.user, x.fullname, x.id, x.timestamp, x.url,
                                         x.likes, x.replies, x.retweets,
-                                        x.text, x.html])
+                                        x.text, x.html, x.is_video])
                     else:
                         json.dump(tweets, output, cls=JSONEncoder)
     except KeyboardInterrupt:
